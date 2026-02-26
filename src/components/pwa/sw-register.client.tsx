@@ -8,9 +8,14 @@ export function ServiceWorkerRegister() {
       return;
     }
 
-    navigator.serviceWorker.register("/sw.js").catch(() => {
+    navigator.serviceWorker
+      .register("/sw.js", { updateViaCache: "none" })
+      .then((registration) => {
+        registration.update();
+      })
+      .catch(() => {
       return;
-    });
+      });
   }, []);
 
   return null;

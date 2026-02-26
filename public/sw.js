@@ -1,5 +1,9 @@
-const CACHE_NAME = "stadt-assistent-static-v1";
-const STATIC_ASSETS = ["/", "/manifest.json", "/icons/icon-192.svg", "/icons/icon-512.svg"];
+const CACHE_NAME = "stadt-assistent-static-v3";
+const STATIC_ASSETS = ["/manifest.json", "/icons/icon-192.svg", "/icons/icon-512.svg"];
+
+function isNavigationRequest(request) {
+  return request.mode === "navigate";
+}
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -33,6 +37,23 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (!requestUrl.pathname.startsWith("/_next/static") && requestUrl.pathname.startsWith("/api")) {
+    return;
+  }
+
+  if (isNavigationRequest(event.request)) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+          return response;
+        })
+        .catch(() => {
+          return caches.match(event.request);
+        }),
+    );
     return;
   }
 

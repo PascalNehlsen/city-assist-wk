@@ -1,7 +1,7 @@
-import type { WasteCollection } from "@/types/waste";
+import type { WasteNextCollection } from "@/types/waste";
 
 export async function scheduleWasteNotifications(
-  collections: WasteCollection[],
+  collections: WasteNextCollection[],
 ): Promise<void> {
   void collections;
   return Promise.resolve();
