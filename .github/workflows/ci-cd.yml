@@ -1,0 +1,74 @@
+name: CI-CD
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  quality-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Test
+        run: pnpm run test
+
+      - name: Build app
+        run: pnpm run build
+        env:
+          NODE_ENV: production
+          APP_BASE_URL: https://stadt-assistent.example
+          WASTE_API_BASE_URL: https://waste-api.example
+          WASTE_API_KEY: ci-placeholder
+
+      - name: Login to GHCR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: docker build -t $REGISTRY/$IMAGE_NAME:${{ github.sha }} .
+
+      - name: Push Docker image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: docker push $REGISTRY/$IMAGE_NAME:${{ github.sha }}
+
+      - name: Deploy container
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          DEPLOY_HOOK_URL: ${{ secrets.DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$DEPLOY_HOOK_URL" ]; then
+            echo "DEPLOY_HOOK_URL not configured; skipping deploy."
+            exit 0
+          fi
+          curl -fsS -X POST "$DEPLOY_HOOK_URL"
