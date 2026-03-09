@@ -1,5 +1,6 @@
 "use client";
 
+import { formatWasteDate } from "@/features/waste/utils/waste-date";
 import { useEffect, useMemo, useState } from "react";
 
 const STREET_STORAGE_KEY = "waste.selectedStreetId";
@@ -56,24 +57,6 @@ export default function WastePicker() {
   const [currentCollectionIndex, setCurrentCollectionIndex] = useState<number>(0);
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-
-  function formatWasteDate(dateString: string): string {
-    const parsedDate = new Date(dateString);
-
-    if (Number.isNaN(parsedDate.getTime())) {
-      return dateString;
-    }
-
-    const weekday = new Intl.DateTimeFormat("de-DE", { weekday: "short" })
-      .format(parsedDate)
-      .replace(".", "");
-    const dayMonth = new Intl.DateTimeFormat("de-DE", {
-      day: "2-digit",
-      month: "2-digit",
-    }).format(parsedDate);
-
-    return `${weekday}, ${dayMonth}.`;
-  }
 
   async function loadNextCollections(selectedStreetId: string, selectedHouseNumberId: string) {
     setError("");
