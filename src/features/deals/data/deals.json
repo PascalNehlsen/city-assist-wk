@@ -1,0 +1,20 @@
+[
+  {
+    "id": "deal-1",
+    "title": "10% auf Backwaren",
+    "vendor": "Bäckerei Altstadt",
+    "expiresAt": "2026-03-30"
+  },
+  {
+    "id": "deal-2",
+    "title": "2 für 1 Eintritt",
+    "vendor": "Stadtmuseum",
+    "expiresAt": "2026-01-01"
+  },
+  {
+    "id": "deal-3",
+    "title": "Kostenlose Probefahrt",
+    "vendor": "Radhaus Wermelskirchen",
+    "expiresAt": "2026-12-31"
+  }
+]

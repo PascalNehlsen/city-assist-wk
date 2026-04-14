@@ -1,0 +1,20 @@
+[
+  {
+    "id": "evt-1",
+    "title": "Wochenmarkt Innenstadt",
+    "date": "2026-03-01",
+    "location": "Marktplatz"
+  },
+  {
+    "id": "evt-2",
+    "title": "Stadtfest Wermelskirchen",
+    "date": "2026-06-20",
+    "location": "Innenstadt"
+  },
+  {
+    "id": "evt-3",
+    "title": "Konzert im Bürgerzentrum",
+    "date": "2026-04-11",
+    "location": "Bürgerzentrum"
+  }
+]
